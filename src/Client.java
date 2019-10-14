@@ -3,45 +3,50 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-class Client {
+public class Client {
+	Socket clientSocket;
+	BufferedReader buffer;
+	PrintWriter printi;
+	BufferedReader reader;
 
-    public static void main(String[] args) {
-        Socket socket = null;
-        try {
-            socket = new Socket("localhost", 3141);
+	public Client() {
+		try {
+			clientSocket = new Socket("localhost", 1131);
+			System.out.println("Client ist an Board");
 
-            OutputStream output = socket.getOutputStream();
-            PrintStream ps = new PrintStream(output, true);
-            ps.println("Hallo Welt!");
-            ps.println("Hallo Otto!");
+			printi = new PrintWriter(clientSocket.getOutputStream());
 
-            InputStream input = socket.getInputStream();
-            System.out.println("verf\u00FCgbare Bytes: " + input.available());
-            BufferedReader buff = new BufferedReader(new InputStreamReader(input));
-            
-            while (buff.ready()) {
-                System.out.println(buff.readLine());
-            }
+			// InputStream input = clientSocket.getInputStream();
+			reader = new BufferedReader(new InputStreamReader(System.in));
 
-        } catch (UnknownHostException e) {
-            System.out.println("Unknown Host...");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("IOProbleme...");
-            e.printStackTrace();
-        } finally {
-            if (socket != null)
-                try {
-                    socket.close();
-                    System.out.println("Socket opened...");
-                } catch (IOException e) {
-                    System.out.println("Socket cannot be opened...");
-                    e.printStackTrace();
-                }
-        }
-    }
-} 
+			String consoleInput = null;
+
+			while (true) {
+				consoleInput = reader.readLine();
+				printi.println(consoleInput);
+				printi.flush();
+				System.out.println(consoleInput);
+			}
+
+			// printi.write("Na du");
+			//
+			//
+			// printi.close();
+			// reader.close();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void main(String[] args) {
+		new Client();
+
+	}
+
+}
